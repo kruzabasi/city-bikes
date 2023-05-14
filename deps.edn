@@ -1,0 +1,10 @@
+{:paths ["src/main"]
+
+ :deps  {org.clojure/clojure {:mvn/version "1.11.1"}
+         ring/ring           {:mvn/version "1.10.0"}
+         integrant/integrant {:mvn/version "0.8.0"}
+         metosin/reitit      {:mvn/version "0.7.0-alpha3"}}
+ 
+ :aliases {:dev  {:extra-paths ["src/dev"]
+                  :extra-deps  {integrant/repl {:mvn/version "0.3.2"}}}
+           :repl {:jvm-opts ["-Dclojure.server.repl={:port 7777 :accept clojure.core.server/repl}"]}}}
