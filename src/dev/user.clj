@@ -14,3 +14,17 @@
 (defn stop-server
   []
   (ig-repl/halt))
+
+(def db-uri "datomic:dev://localhost:4334/city-bike")
+
+(comment 
+ (defn create-client
+  []
+  (d/client {:server-type :dev-local
+             :system "dev"})))
+
+(defn create-db
+  []
+  (d/create-database db-uri))
+
+(def conn (d/connect db-uri))
