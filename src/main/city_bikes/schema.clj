@@ -4,6 +4,7 @@
   [{:db/ident       :station/id
     :db/valueType   :db.type/long
     :db/cardinality :db.cardinality/one
+    :db/unique      :db.unique/identity
     :db/doc         "Station ID"}
    
    {:db/ident       :station/name
