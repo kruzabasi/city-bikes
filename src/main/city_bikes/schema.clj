@@ -9,7 +9,37 @@
    {:db/ident       :station/name
     :db/valueType   :db.type/string
     :db/cardinality :db.cardinality/one
-    :db/doc         "Station Name"}])
+    :db/doc         "Station Name"}
+   
+   {:db/ident       :station/address
+    :db/valueType   :db.type/string
+    :db/cardinality :db.cardinality/one
+    :db/doc         "Station Address"}
+   
+   {:db/ident       :station/city
+    :db/valueType   :db.type/string
+    :db/cardinality :db.cardinality/one
+    :db/doc         "Station City Name"}
+   
+   {:db/ident       :station/operator
+    :db/valueType   :db.type/string
+    :db/cardinality :db.cardinality/one
+    :db/doc         "Station Operators Name"}
+   
+   {:db/ident       :station/capacity
+    :db/valueType   :db.type/long
+    :db/cardinality :db.cardinality/one
+    :db/doc         "Station Max Capacity"}
+   
+   {:db/ident       :station/coord.x
+    :db/valueType   :db.type/double
+    :db/cardinality :db.cardinality/one
+    :db/doc         "Station Longitude"}
+   
+   {:db/ident       :station/coord.y
+    :db/valueType   :db.type/double
+    :db/cardinality :db.cardinality/one
+    :db/doc         "Station Latitude"}])
 
 (def trip-schema
   [{:db/ident       :trip/departure-time
