@@ -3,6 +3,7 @@
             [city-bikes.server :as server]
             [clojure.java.io :as io]
             [clojure.data.csv :as csv]
+            [clojure.instant :as instant]
             [datomic.api :as d]))
 
 (ig-repl/set-prep!
@@ -16,6 +17,10 @@
 (defn stop-server
   []
   (ig-repl/halt))
+
+(defn str->inst
+  [string]
+  (instant/read-instant-date string))
 
 (defn read-csv-data
   "Reads a csv file and returns the data without headers"
