@@ -5,10 +5,11 @@
  
  :mvn/local-repo ".m2"
 
- :deps           {org.clojure/clojure {:mvn/version "1.11.1"} 
-                  ring/ring           {:mvn/version "1.10.0"}
-                  integrant/integrant {:mvn/version "0.8.0"}
-                  metosin/reitit      {:mvn/version "0.7.0-alpha3"}}
+ :deps           {org.clojure/clojure  {:mvn/version "1.11.1"}
+                  ring/ring            {:mvn/version "1.10.0"}
+                  integrant/integrant  {:mvn/version "0.8.0"}
+                  metosin/reitit       {:mvn/version "0.7.0-alpha3"}
+                  org.clojure/data.csv {:mvn/version "1.0.1"}}
  
  :aliases        {:dev  {:extra-paths ["src/dev"]
                          :extra-deps  {integrant/repl        {:mvn/version "0.3.2"} 
