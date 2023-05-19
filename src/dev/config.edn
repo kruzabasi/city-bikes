@@ -1,0 +1,4 @@
+{:city-bikes.components.jetty/server {:port 8081
+                                      :handler #ig/ref :city-bikes.server/app}
+ :city-bikes.server/app              {:datomic #ig/ref :city-bikes.components.datomic/db}
+ :city-bikes.components.datomic/db   {:db-uri "datomic:dev://localhost:4334/city-bike"}}
