@@ -1,6 +1,7 @@
 (ns user
-  (:require [integrant.repl :as ig-repl]
-            [city-bikes.server :as server]
+  (:require [integrant.core :as ig]
+            [integrant.repl :as ig-repl]
+            [integrant.repl.state :as state]
             [clojure.java.io :as io]
             [clojure.data.csv :as csv]
             [clojure.instant :as instant]
@@ -8,7 +9,12 @@
 
 (ig-repl/set-prep!
  (fn []
-   server/config))
+   (let [config (-> "config.edn"
+                    io/resource
+                    slurp
+                    ig/read-string)]
+     (ig/load-namespaces config)
+     config)))
 
 (defn start-server
   []
@@ -17,6 +23,12 @@
 (defn stop-server
   []
   (ig-repl/halt))
+;;conn or db?
+(def conn (atom {}))
+
+(comment 
+  (swap! conn (:conn (-> :city-bikes.components.datomic/db
+                         integrant.repl.state/system))))
 
 (defn str->inst
   [string]
@@ -37,14 +49,9 @@
   (let [data (-> file io/resource slurp csv/read-csv rest)]
     data))
 
-(comment
-  
-  (def db-uri "datomic:dev://localhost:4334/city-bike")
-  (def conn (d/connect db-uri))
-
-  (defn db-add!
-    [conn tx-data]
-    (d/transact conn tx-data)))
+(defn db-add!
+  [conn tx-data]
+  (d/transact conn tx-data))
 
 
 (defmulti load-data
@@ -81,12 +88,5 @@
     (for [row data]
       (load-data entity row))))
 
-
-(comment
-  
-  (defn create-db
-    []
-    (d/create-database db-uri))
-
-  (defn initiate-schema [schema-data]
-    (d/transact conn schema-data)))
+(defn initiate-schema [schema-data]
+  (d/transact conn schema-data))
