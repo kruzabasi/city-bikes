@@ -23,12 +23,12 @@
 (defn stop-server
   []
   (ig-repl/halt))
-;;conn or db?
-(def conn (atom {}))
 
-(comment 
-  (swap! conn (:conn (-> :city-bikes.components.datomic/db
-                         integrant.repl.state/system))))
+(defn conn
+  []
+  (-> integrant.repl.state/system
+      :city-bikes.components.datomic/db
+      :conn))
 
 (defn str->inst
   [string]
@@ -57,10 +57,10 @@
 (defmulti load-data
   "(load-data :entity data)
    data must be [vector of strings] matching valid entity method"
-  (fn [entity _] entity))
+  (fn [entity _ _] entity))
 
 (defmethod load-data :stations
-  [_ [_ id _ _ s-name _ adress _ city operator capacity x y]]
+  [_ conn [_ id _ _ s-name _ adress _ city operator capacity x y]]
   (db-add! conn
            [{:station/id       (str->long id)
              :station/name     s-name
@@ -72,21 +72,27 @@
              :station/coord.y  (str->double y)}]))
 
 (defmethod load-data :trips
-  [_ [departure return ds-id _ rs-id _ dist duration]]
-  (db-add! conn
-           [{:trip/departure-time    (str->inst departure)
-             :trip/return-time       (str->inst return)
-             :trip/departure-station [:station/id (str->long ds-id)]
-             :trip/return-station    [:station/id (str->long rs-id)]
-             :trip/distance          (str->long dist)
-             :trip/duration          (str->long duration)}]))
+  [_ conn [departure return ds-id _ rs-id _ dist duration]]
+  (try
+    (when (and (>= (str->long dist) 10) (>= (str->long duration) 10))
+      (db-add! conn
+               [{:trip/departure-time    (str->inst departure)
+                 :trip/return-time       (str->inst return)
+                 :trip/departure-station [:station/id (str->long ds-id)]
+                 :trip/return-station    [:station/id (str->long rs-id)]
+                 :trip/distance          (str->long dist)
+                 :trip/duration          (str->long duration)}]))
+    (catch NumberFormatException _
+      (prn "\n Error Loading Trip " [ds-id rs-id dist duration]))))
 
 (defn import-csv-data ;; (import-csv-data :trips file)
   [entity file]
-  (let [data (read-csv-data file)]
+  (let [data (read-csv-data file)
+        conn (conn)]
     (prn (str "Importing " (count data) " Items Into " entity))
     (for [row data]
-      (load-data entity row))))
+      (load-data entity conn row))))
 
 (defn initiate-schema [schema-data]
-  (d/transact conn schema-data))
+  (let [conn (conn)]
+    (d/transact conn schema-data)))
