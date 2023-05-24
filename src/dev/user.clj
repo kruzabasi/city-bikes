@@ -73,25 +73,25 @@
 
 (defmethod load-data :trips
   [_ conn [departure return ds-id _ rs-id _ dist duration]]
-  (try
-    (when (and (>= (str->long dist) 10) (>= (str->long duration) 10))
-      (db-add! conn
-               [{:trip/departure-time    (str->inst departure)
-                 :trip/return-time       (str->inst return)
-                 :trip/departure-station [:station/id (str->long ds-id)]
-                 :trip/return-station    [:station/id (str->long rs-id)]
-                 :trip/distance          (str->long dist)
-                 :trip/duration          (str->long duration)}]))
-    (catch NumberFormatException _
-      (prn "\n Error Loading Trip " [ds-id rs-id dist duration]))))
+  (when (and (>= (str->long dist) 10) (>= (str->long duration) 10))
+    (db-add! conn
+             [{:trip/departure-time    (str->inst departure)
+               :trip/return-time       (str->inst return)
+               :trip/departure-station [:station/id (str->long ds-id)]
+               :trip/return-station    [:station/id (str->long rs-id)]
+               :trip/distance          (str->long dist)
+               :trip/duration          (str->long duration)}])))
 
 (defn import-csv-data ;; (import-csv-data :trips file)
   [entity file]
   (let [data (read-csv-data file)
         conn (conn)]
     (prn (str "Importing " (count data) " Items Into " entity))
-    (for [row data]
-      (load-data entity conn row))))
+    (doseq [row data]
+      (try
+        (load-data entity conn row)
+        (catch NumberFormatException _
+          (prn "\n Error Loading Trip: " row))))))
 
 (defn initiate-schema [schema-data]
   (let [conn (conn)]
