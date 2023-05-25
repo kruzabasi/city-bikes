@@ -1,14 +1,15 @@
 (ns city-bikes.router
   (:require [city-bikes.middleware :as mw]
             [reitit.ring :as ring]
-            [ring.util.response :as rr]
             [muuntaja.core :as m]
             [reitit.coercion.spec :as coercion-spec]
             [reitit.dev.pretty :as pretty]
             [reitit.ring.coercion :as coercion]
             [reitit.ring.middleware.muuntaja :as muuntaja]
             [reitit.ring.spec :as rs]
-            [reitit.ring.middleware.dev :as dev]))
+            [reitit.ring.middleware.dev :as dev]
+            
+            [city-bikes.stations.routes :as stations]))
 
 (defn router-config
   [sys]
@@ -23,17 +24,10 @@
                        coercion/coerce-response-middleware
                        mw/wrap-sys]}})
 
-(defn hello-handler
-  [{{{:keys [conn]} :datomic} :sys}]
-  (prn "Conn " conn)
-  (rr/response {:hello ["Hekko MF"]}))
-
 (defn routes
   [sys]
   (ring/ring-handler
    (ring/router
-    ["/hello"
-     {:get {:handler   hello-handler
-            :responses {201 {:body nil?}}
-            :summary   "Test"}}]
+    ["/v1"
+     stations/routes]
     (router-config sys))))
