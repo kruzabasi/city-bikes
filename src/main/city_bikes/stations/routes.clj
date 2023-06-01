@@ -1,15 +1,5 @@
 (ns city-bikes.stations.routes
-  (:require [datomic.api :as d]
-            [ring.util.response :as rr]))
-
-(defn get-all-stations
-  [{{{:keys [conn]} :datomic} :sys}]
-  (rr/response {:stations
-                (d/q '[:find (pull ?station [:station/id
-                                             :station/address
-                                             :station/name])
-                       :where [?station :station/id]]
-                     (d/db conn))}))
+  (:require [city-bikes.stations.handlers :refer [get-all-stations]]))
 
 (def routes
   ["/station"
