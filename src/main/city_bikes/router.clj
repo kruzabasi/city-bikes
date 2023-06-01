@@ -7,14 +7,14 @@
             [reitit.ring.coercion :as coercion]
             [reitit.ring.middleware.muuntaja :as muuntaja]
             [reitit.ring.spec :as rs]
-            [reitit.ring.middleware.dev :as dev]
+        ;;    [reitit.ring.middleware.dev :as dev]
             
             [city-bikes.stations.routes :as stations]))
 
 (defn router-config
   [sys]
   {:validate rs/validate
-   :reitit.middleware/transform dev/print-request-diffs
+  ;; :reitit.middleware/transform dev/print-request-diffs
    :exception pretty/exception
    :data {:sys sys
           :coercion coercion-spec/coercion
