@@ -2,3 +2,5 @@
 .cpcache
 .calva
 .DS_Store
+.clj-kondo
+.lsp
